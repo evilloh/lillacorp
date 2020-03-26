@@ -1,0 +1,44 @@
+// NAVBAR - HEADER
+
+.navbar {
+  height: 32rem;
+  width: 100%;
+  font-size: 2rem;
+  
+  
+  &__container{
+    height: 100%;
+    width: 100%;
+    background-color: #C8A2C8;
+  }
+
+  &__logo{
+    text-align: center;
+    width: 100%;
+    display: block;
+    img{
+      margin-top: 4.5rem;
+      margin-bottom: 5rem;
+    }
+  }
+
+  &__links{
+    &__container {
+      display: flex;
+      justify-content: space-between;
+    }
+    
+    &__ul{
+      font-weight: 600;
+      width: 33%;
+      display: flex;
+      justify-content: space-evenly;
+      margin-bottom: 5rem;
+    }
+
+    &__link{
+
+    }
+  }
+
+}
