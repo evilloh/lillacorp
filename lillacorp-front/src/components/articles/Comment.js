@@ -1,19 +1,16 @@
-import React, { Component } from 'react';
+import React, { Component, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
 
-class Article extends Component {
-  state = {
-    comment : {}
-  };
+function Comment (props) {
+  const [comment, setComment] = useState({})
 
-  componentDidMount(){
-    this.setState({comment : this.props.comment})
-  }
+  useEffect(() => {
+    setComment(props.comment)
+  })
 
-  render() {
     return (
       <div className="comment__container">
         <div className="comment__header">
@@ -26,10 +23,8 @@ class Article extends Component {
       </div>
     );
   }
-}
 
-Article.propTypes = {
-  article: PropTypes.object.isRequired
-};
 
-export default Article;
+
+
+export default Comment;

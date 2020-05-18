@@ -1,32 +1,27 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 import classNames from 'classnames';
 
 
-class Article extends Component {
-  state = {
-    showArticleInfo: false,
-    isTop: false,
-  };
+function Article (props) {
+  const [articleInfo, setArticleInfo] = useState(false)
+  const [isTop, setIsTop] = useState(false)
 
-  componentDidMount(){
-    this.setState({isTop : this.props.isTop})
-  }
+  useEffect (() => {
+    setIsTop(props.isTop)
+  })
 
-  render() {
-    const { _id, title, index, body, description, imgUrl } = this.props.article;
-    const onDeleteClick = this.props.onDeleteClick
-    const {getAllArticles} = this.props.getAllArticles
-    const { showArticleInfo } = this.state;
+    const { _id, title, index, body, description, imgUrl } = props.article;
+    const onDeleteClick = props.onDeleteClick
+    const {getAllArticles} = props.getAllArticles
 
     const cardClass = classNames({
-      'cardSmall' : !this.state.isTop ,
-      'card' : this.state.isTop
+      'cardSmall' : !isTop ,
+      'card' :isTop
     })
-
-    return (
+return (
       <div className={`${cardClass}__container`}>
         <Link to={{pathname: `article/${_id}`}}>
           <img className={`${cardClass}__image`} src={imgUrl}></img>
@@ -37,19 +32,16 @@ class Article extends Component {
               {title}
             </Link>
           </h4>
-          { this.state.isTop ? 
+          {isTop ? 
           <h4 className={`${cardClass}__description`}>
             {description}
           </h4> : null
           }
-
         </div>
-
           <i
             onClick={() =>
-              this.setState({
-                showArticleInfo: !this.state.showArticleInfo
-              })
+              setArticleInfo(!articleInfo
+              )
             }
             className="fas fa-sort-down"
             style={{ cursor: 'pointer' }}
@@ -71,7 +63,7 @@ class Article extends Component {
               }}
             />
           </Link>
-        {showArticleInfo ? (
+        {articleInfo ? (
           <ul className="list-group">
             <li className="list-group-item">Email:</li>
             <li className="list-group-item">Phone:</li>
@@ -79,7 +71,6 @@ class Article extends Component {
         ) : null}
       </div>
     );
-  }
 }
 
 Article.propTypes = {

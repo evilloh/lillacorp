@@ -1,17 +1,16 @@
-import React, { Component } from 'react';
+import React, { useEffect } from 'react';
 import Article from './Article';
 import Sheet from './SheetTest';
 import axios from 'axios';
 
-class Articles extends Component {
-  state = {
-  };
+function Articles() {
 
-  componentDidMount() {
+  useEffect(() => {
+    console.log('casa')
     this.getAllArticles()
-  }
+  })
 
-  getAllArticles = () => {
+ const getAllArticles = () => {
     // request to the backend to retrieve all the articles 
     axios.get(`http://localhost:3001/articles/getAllArticles`)
     .then(res => {
@@ -21,7 +20,7 @@ class Articles extends Component {
     })
   }
 
-  onDeleteClick = id => {
+  const onDeleteClick = id => {
     axios.delete(`http://localhost:3001/articles/${id}`)
     .then(res => {
       this.getAllArticles()
@@ -34,18 +33,17 @@ class Articles extends Component {
   };
 
 
-  render() {
     const { articles } = this.state;
     
     return (
       <section className="articles__container">
         <Sheet></Sheet>
         {articles ? articles.map((article, index) => (
-          <Article key={article._id} index={index} article={article} onDeleteClick={this.onDeleteClick} getAllArticles={this.getAllArticles} />
+          <Article key={article._id} index={index} article={article} onDeleteClick={onDeleteClick} getAllArticles={getAllArticles} />
         )) : null}
       </section>
     );
-  }
+  
 }
 
 export default Articles;

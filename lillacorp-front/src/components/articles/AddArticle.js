@@ -1,27 +1,25 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import TextInputGroup from '../layout/TextInputGroup';
 import axios from 'axios';
 
-class AddArticle extends Component {
-  state = {
-    title: '',
-    body: '',
-    errors: {}
-  };
-
-  onSubmit = (e) => {
+function AddArticle(props) {
+  const [body, setBody] = useState('')
+  const [errors, setErrors] = useState({errors : {}})
+  const [title, setTitle] = useState('')
+  
+  const onSubmit = (e) => {
     e.preventDefault();
 
-    const { title, body } = this.state;
 
     // Check For Errors
     if (title === '') {
-      this.setState({ errors: { title: 'Title is required' } });
+      setErrors({ title: 'Title is required' });
+      console.log(errors)
       return;
     }
 
     if (body === '') {
-      this.setState({ errors: { body: 'Body is required' } });
+      setErrors({ body: 'Body is required' });
       return;
     }
 
@@ -40,34 +38,27 @@ class AddArticle extends Component {
     });
     
     let redirectToHome = () => {
-      this.props.history.push('/');
+      props.history.push('/');
     }
 
 
     // Clear State
-    // this.setState({
-    //   title: '',
-    //   body: '',
-    //   errors: {}
-    // });
+    setTitle('')
+    setBody('')
+    setErrors({})
   };
-
-  onChange = e => this.setState({ [e.target.name]: e.target.value });
-
-  render() {
-    const { title, body, errors } = this.state;
 
     return (
       <div className="card mb-3">
         <div className="card-header">Add Article</div>
         <div className="card-body">
-          <form onSubmit={this.onSubmit}>
+          <form onSubmit={onSubmit}>
             <TextInputGroup
               label="Title"
               name="title"
               placeholder="Enter title"
               value={title}
-              onChange={this.onChange}
+              onChange={e => setTitle(e.target.value)}
               error={errors.title}
             />
             <TextInputGroup
@@ -76,7 +67,7 @@ class AddArticle extends Component {
               type="body"
               placeholder="Enter Body"
               value={body}
-              onChange={this.onChange}
+              onChange={e => setBody(e.target.value)}
               error={errors.body}
             />
             <input
@@ -89,6 +80,5 @@ class AddArticle extends Component {
       </div>
     );
   }
-}
 
 export default AddArticle;

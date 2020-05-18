@@ -1,29 +1,27 @@
-import React, { Component } from 'react';
+import React,  { useState, useEffect } from 'react';
 import Article from './Article';
 import axios from 'axios';
 import './../home.scss'
-class Home extends Component {
-  state = {
-    articles : []
-  };
+function Home()  {
 
-  componentDidMount() {
-    this.getAllArticles()
-  }
+  const [articles, setArticles] = useState([])
 
-  getAllArticles = () => {
+  useEffect(() => {
+    getAllArticles()
+  }, []) 
+
+  const getAllArticles = async () => {
     // request to the backend to retrieve all the articles 
-    axios.get(`http://localhost:3001/articles/getAllArticles`)
-    .then(res => {
-      const articles = res.data;
-      this.setState({ articles });
-    })
+    const apicall = await axios.get(`http://localhost:3001/articles/getAllArticles`)
+    const articles = await apicall.data
+    setArticles(articles)
+
   }
 
-  onDeleteClick = id => {
+  const onDeleteClick = id => {
     axios.delete(`http://localhost:3001/articles/${id}`)
     .then(res => {
-      this.getAllArticles()
+      getAllArticles()
       console.log("you have succesfully deleted an article")
     })
     .catch(res =>{
@@ -32,10 +30,6 @@ class Home extends Component {
     //// DELETE article ////
   };
 
-
-  render() {
-    console.log("state", this.state)
-    const { articles } = this.state;
     const topArticles = articles.slice(0, 2)
     const restArticles = articles.slice(2)
 
@@ -43,14 +37,13 @@ class Home extends Component {
       <section className="articles__container">
 
         {articles ? topArticles.map((article, index) => (
-          <Article isTop={true} key={article._id} index={index} article={article} onDeleteClick={this.onDeleteClick} getAllArticles={this.getAllArticles} />
+          <Article isTop={true} key={article._id} index={index} article={article} onDeleteClick={onDeleteClick} getAllArticles={getAllArticles} />
         )) : null}
         {articles ? restArticles.map((article, index) => (
-          <Article key={article._id} index={index} article={article} onDeleteClick={this.onDeleteClick} getAllArticles={this.getAllArticles} />
+          <Article  key={article._id} index={index} article={article} onDeleteClick={onDeleteClick} getAllArticles={getAllArticles} />
         )) : null}
       </section>
     );
-  }
 }
 
 export default Home;

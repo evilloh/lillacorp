@@ -1,49 +1,49 @@
-import React, { Component } from 'react';
+import React, { Component, useEffect, useState } from 'react';
 import TextInputGroup from '../layout/TextInputGroup';
 import axios from 'axios';
 
-class EditArticle extends Component {
-  state = {
+function EditArticle (props) {
+  const [title, setTitle] = useState()
+  const [body, setBody] = useState()
+  const [errors, setErrors] = useState({})
+  const [articles, setArticles] = useState({})
+  const state = {
     title: '',
     body: '',
     errors: {}
   };
 
-  componentDidMount() {
-    this.getArticle()
-  }
+  useEffect(() => {
+    getArticle()
+  }, [])
 
-  getArticle = () => {
-    const { id } = this.props.match.params
+  const getArticle = () => {
+    const { id } =props.match.params
     // request to the backend to retrieve all the articles 
     axios.get(`http://localhost:3001/articles/${id}`)
     .then(res => {
       const articles = res.data;
-      this.setState({ title: articles.title, body: articles.body });
+      setTitle(articles.title);
+      setBody(articles.body);
     })
     .catch(res => {
       console.log('We couldnt retrieve your Article')
     })
   }
 
-  onSubmit = (e) => {
+  const onSubmit = (e) => {
     e.preventDefault();
-
-    const { title, body } = this.state;
 
     // Check For Errorors
 
     //
-
-
-
 
     const updArticle = {
       title,
       body,
     };
 
-    const { id } = this.props.match.params;
+    const { id } = props.match.params;
 
     //// UPDATE Article ////
 
@@ -56,12 +56,9 @@ class EditArticle extends Component {
     })
 
     // Clear State
-    this.setState({
-      name: '',
-      email: '',
-      phone: '',
-      errors: {}
-    });    
+    setTitle('')
+    setBody('')
+    setErrors('')
     
     // FIX qua faccio una chiamata con tanto code per niente, in teoria dovrei passargli un 
     // metodo tipo "update all" che viene da redux
@@ -69,31 +66,24 @@ class EditArticle extends Component {
     .then(res => {
       console.log('youcalledme')
       const articles = res.data;
-      this.setState({ articles });
-      this.props.history.push('/');
+      setArticles({ articles });
+      props.history.push('/');
     })
-
-
-
 
   };
 
-  onChange = e => this.setState({ [e.target.name]: e.target.value });
-
-  render() {
-    const { title, body, errors } = this.state;
-    console.log(this.props)
+    console.log(props)
     return (
       <div className="card mb-3">
         <div className="card-header">Edit Article</div>
         <div className="card-body">
-          <form onSubmit={this.onSubmit}>
+          <form onSubmit={onSubmit}>
             <TextInputGroup
               label="Title"
               name="title"
               placeholder="Enter Title"
               value={title}
-              onChange={this.onChange}
+              onChange={e => setTitle(e.target.value)}
               error={errors.title}
             />
             <TextInputGroup
@@ -101,7 +91,7 @@ class EditArticle extends Component {
               name="body"
               placeholder="Enter Body"
               value={body}
-              onChange={this.onChange}
+              onChange={e => setBody(e.target.value)}
               error={errors.body}
             />
             <input
@@ -114,6 +104,6 @@ class EditArticle extends Component {
       </div>
     );
   }
-}
+
 
 export default EditArticle;
