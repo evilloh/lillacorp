@@ -2,9 +2,10 @@ var mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 var CommentSchema = new Schema({
-  body: String,
+  body:{ type: 'String', required: true },
   author: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-  article: { type: mongoose.Schema.Types.ObjectId, ref: 'Article' }
+  article: { type: mongoose.Schema.Types.ObjectId, ref: 'Article' },
+  createdAt: { type: Date, default: Date.now, required: true}
 }, {timestamps: true});
 
 // Requires population of author

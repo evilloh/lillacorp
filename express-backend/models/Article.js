@@ -5,13 +5,14 @@ var User = mongoose.model('User');
 
 var ArticleSchema = new mongoose.Schema({
   slug: {type: String, lowercase: true, unique: true},
-  title: String,
-  description: String,
-  body: String,
+  title: { type: 'String', required: true },
+  description: { type: 'String', required: true },
+  body: { type: 'String', required: true },
   favoritesCount: {type: Number, default: 0},
-  comments: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comment' }],
+  comments: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comments' }],
   tagList: [{ type: String }],
-  author: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
+  author: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  dateAdded: { type: 'Date', default: Date.now, required: true },
 }, {timestamps: true});
 
 // ArticleSchema.plugin(uniqueValidator, {message: 'is already taken'});

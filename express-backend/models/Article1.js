@@ -6,10 +6,11 @@ const articleSchema = new Schema(
     title: String,
     description: String,
     body: String,
-    comments: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comment' }],
+    comments: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comments' }],
     tagList: [{ type: String }],
     author: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     imageUrl: String,
+    createdAt: { type: Date, default: Date.now, required: true}
   },
   {
     timestamps: true
