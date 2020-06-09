@@ -21,7 +21,6 @@ router.get('/lillachoice', function (req, response) {
   });
   
   function authorize(credentials, callback) {
-    
     const {client_secret, client_id, redirect_uris} = credentials.installed;
     const oAuth2Client = new google.auth.OAuth2(
         client_id, client_secret, redirect_uris[0]);
@@ -132,6 +131,8 @@ router.delete('/:id', function (req, res) {
 // Update a single article 
 
 router.put('/update/:id', function (req, res) {
+    // la callback function seria el CONTROLLER
+    // en el controller llamaras al SERVICE
   mongoose.set('useFindAndModify', false);
   let { id } = req.params;
   const body  = {...req.body}
@@ -146,45 +147,47 @@ router.put('/update/:id', function (req, res) {
 
 // Retrieve a single article 
 
-router.get('/:id', function (req, res) {
-  let { id } = req.params;
-  Articles.findOne({_id: id}, function(error, doc) {
-    if (error) return console.log('Error in retrieving your single Article', doc);
-    res.json(doc);
-  })
-});
+// router.get('/:id', function (req, res) {
+//   let { id } = req.params;
+//   Articles.findOne({_id: id})
+//   .populate('Comment')
+//   .exec(function(error, doc) {
+//     if (error) return console.log('Error in retrieving your single Article', doc);
+//     console.log("here's the post", doc)
+//     res.json(doc);
+//   })
+// });
 
+// Retrieve a single article 
+
+// router.get('/:id', function (req, res) {
+//   let { id } = req.params;
+//   Articles.findOne({_id: id}, function(error, doc) {
+//     if (error) return console.log('Error in retrieving your single Article', doc);
+//     console.log("casa",doc)
+//     res.json(doc);
+//   })
+// });
+
+router.get('/:id', async function (req, res) {
+  let { id } = req.params;
+  const response = await Articles.findOne({_id: id})
+  .populate({path: 'comments', model: "Comments",
+   populate: {path: 'author', model: "User"}})
+  res.json(response)
+});
 // Post Comment
 
-router.post('/:id/comments', function(req, res, next) {
+router.post('/comments/:id', async function(req, res, next) {
   let { id } = req.params;
-  Articles.findOne({_id: id}, function(err, article){
-    if (err){
-      console.log(err, "couldn't find the article to enchufar your comment")
-    } else {
-      const comment = new Comments(req.body.comment);
-      comment.article = article;
-      // comment.author = "evilloh";
-      return comment.save().then(function(){
-        article.comments.push(comment);
-  
-        return article.save().then(function(article) {
-          res.json({comment: comment.toJSONFor(user)});
-        });
-      });
-    }
-    // } else {
-    //   console.log(article, "vediamo sto article")
-    //   Comments.create(req.body.create, function(err, comment){
-    //     if (err) {
-    //       console.log("couldn't Create a comment in the database!", err)
-    //     } else {
-    //       article.comments.push(comment)
-    //       article.save()
-    //     }
-    //   })
-    //   console.log(req.body.comment)
-    // }
+  const article = await Articles.findOne({_id: id})
+  const comment = await new Comments(req.body);
+  return comment.save().then((comentone) =>{
+   article.comments.push(comment);
+   return article.save().then(function(commentino) {
+     console.log('added comment to the article', commentino)
+     res.json(comment);
+    })
   })
 });
 

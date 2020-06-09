@@ -1,36 +1,40 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 // import TextInputGroup from '../layout/TextInputGroup';
 import TextAreaInput from '../layout/TextAreaInput';
 import Comment from './Comment';
 import axios from 'axios';
 
-class EditArticle extends Component {
-  state = {
+function EditArticle (props) {
+
+  const [article, setArticle] = useState({
+    _id: '',
     title: '',
     body: '',
     description: '',
-    comments: '',
     tagList: '',
     author: '',
     imgUrl: '',
-    errors: {}
-  };
+    errors: '',
+    comments: []
+  })
+  const [commentField, setCommentField] = useState('')
+  
+  useEffect (() => {
+    getArticle()
+    // getComments()
+  }, [])
 
-  componentDidMount() {
-    this.getArticle()
-    // this.getComments()
-  }
 
-  getArticle = () => {
-    const { id } = this.props.match.params
+  const getArticle = () => {
+    const { id } = props.match.params
     // request to the backend to retrieve all the articles 
     axios.get(`http://localhost:3001/articles/${id}`)
     .then(res => {
       const articles = res.data;
-      console.log(res.data)
-      this.setState({ 
-        title: articles.title,
-         body: articles.body,
+      setArticle({ 
+          _id: articles._id,
+          title: articles.title,
+          body: articles.body,
           description: articles.description,
           comments: articles.comments,
           tagList: articles.tagList,
@@ -43,76 +47,54 @@ class EditArticle extends Component {
     })
   }
 
-  onSubmit = (e) => {
+  const onSubmit = (e) => {
     e.preventDefault();
-
-    const { title, body } = this.state;
-
+    const { _id } = article;
     // Check For Errorors
-
     //
-
-
-
-
-    const updArticle = {
-      title,
-      body,
+    
+    const comment = {
+      body: commentField,
+      article: _id,
+      author: "5ed7712aea945194d469337a",
+      createdAt: new Date
     };
-
-    const { id } = this.props.match.params;
 
     //// UPDATE Article ////
 
-    axios.put(`http://localhost:3001/articles/update/${id}`, updArticle)
-    .then(res => {
-      console.log('vediamo se e passato qualkcosa', res.data)
-    })
-    .catch(res => {
-      console.log('We couldnt UPDATE your Article')
-    })
+    // axios.put(`http://localhost:3001/articles/update/${_id}`, comment)
+    // .then(res => {
+    //   console.log('vediamo se e passato qualkcosa', res.data)
+    // })
+    // .catch(res => {
+    //   console.log('We couldnt UPDATE your Article')
+    // })
+
+    // invece di mandareun put al article per aggiungergli i commenti e un post ai commenti  possiamo fare solo un post ai commenti E NEL BACK aggiorniamo 
 
     // Clear State
-    this.setState({
-      title: '',
-      body: '',
-      description: '',
-      comments: '',
-      tagList: '',
-      author: '',
-      imgUrl: '',
-      errors: {}
-    });    
+    setCommentField("")
     
     // FIX qua faccio una chiamata con tanto code per niente, in teoria dovrei passargli un 
     // metodo tipo "update all" che viene da redux
-    axios.get(`http://localhost:3001/articles/getAllArticles`)
-    .then(res => {
-      console.log('youcalledme')
-      const articles = res.data;
-      this.setState({ articles });
-      this.props.history.push('/');
-    })
+    axios.post(`http://localhost:3001/articles/comments/${_id}`, comment).then(res => getArticle())
+
 
 
 
 
   };
 
-  onChange = e => this.setState({ [e.target.name]: e.target.value });
-
-  render() {
-    const { title, body, errors, comment, imgUrl } = this.state;
     return (
       <React.Fragment>
       <div className="container-medium article">
-        <h1 className="article__title">{title}</h1>
+        <h1 className="article__title">{article.title}</h1>
 
  
       </div>
       <section className="article__image-container">
         <article className="container-medium">
-          <img src={imgUrl}></img>
+          <img src={article.imgUrl}></img>
           <div className="article__infos">
             <p className="article__infos__title">Published by:</p>
             <p>Federaico</p>
@@ -123,28 +105,26 @@ class EditArticle extends Component {
       </section>
       <section className="container-medium article">
         <article className="article__body">
-          <p>{body}</p>
+          <p>{article.body}</p>
           <hr/>
         </article> 
 
         <article className="article__comments">
         <h3>Comments:</h3>
-        <Comment comment={comment}></Comment>
-        <Comment comment={comment}></Comment>
-        {comment ? comment.map(comment => (
-          <p>{comment.body}</p>
+        {article.comments ? article.comments.map(comment => (
+          <Comment {...comment}></Comment>
         )) : null}
         </article> 
         <div className="article__comments__new-comment__container">
         <div className="article__comments__new-comment__input-container">
-          <form onSubmit={this.onSubmit}>
+          <form onSubmit={onSubmit}>
             <TextAreaInput
               label="Comment"
               name="comment"
               placeholder="Enter your Comment"
-              value={comment}
-              onChange={this.onChange}
-              error={errors.body}
+              value={commentField}
+              onChange={e => setCommentField(e.target.value)}
+              error={article.errors}
 
             />
             <input
@@ -163,6 +143,5 @@ class EditArticle extends Component {
       </React.Fragment>
     );
   }
-}
 
 export default EditArticle;
