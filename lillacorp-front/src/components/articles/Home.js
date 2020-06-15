@@ -12,7 +12,7 @@ function Home()  {
 
   const getAllArticles = async () => {
     // request to the backend to retrieve all the articles 
-    const apicall = await axios.get(`http://localhost:3001/articles/getAllArticles`)
+    const apicall = await axios.get(`http://localhost:3001/articles/`)
     const articles = await apicall.data
     setArticles(articles)
 

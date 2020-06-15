@@ -33,8 +33,17 @@ function EditArticle (props) {
 
   const onSubmit = (e) => {
     e.preventDefault();
-
     // Check For Errorors
+    if (title == '') {
+    setErrors({ title: 'Title is required' });
+    console.log(errors)
+    return;
+  }
+
+    if (body == '') {
+      setErrors({ body: 'Body is required' });
+      return;
+    }
 
     //
 
@@ -58,7 +67,7 @@ function EditArticle (props) {
     // Clear State
     setTitle('')
     setBody('')
-    setErrors('')
+    setErrors({})
     
     // FIX qua faccio una chiamata con tanto code per niente, in teoria dovrei passargli un 
     // metodo tipo "update all" che viene da redux

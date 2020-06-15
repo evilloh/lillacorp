@@ -60,18 +60,6 @@ function EditArticle (props) {
       createdAt: new Date
     };
 
-    //// UPDATE Article ////
-
-    // axios.put(`http://localhost:3001/articles/update/${_id}`, comment)
-    // .then(res => {
-    //   console.log('vediamo se e passato qualkcosa', res.data)
-    // })
-    // .catch(res => {
-    //   console.log('We couldnt UPDATE your Article')
-    // })
-
-    // invece di mandareun put al article per aggiungergli i commenti e un post ai commenti  possiamo fare solo un post ai commenti E NEL BACK aggiorniamo 
-
     // Clear State
     setCommentField("")
     

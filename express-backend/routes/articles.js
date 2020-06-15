@@ -1,5 +1,7 @@
 const express = require("express");
 const router = express.Router();
+
+const {ArticlesController} = require('../controllers/products.controller')
 const Articles = require("../models/Article1");
 const Comments = require("../models/Comment");
 const Users = require("../models/User1");
@@ -11,7 +13,6 @@ const {google} = require('googleapis');
 
 
 router.get('/lillachoice', function (req, response) {
-
   
   const SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly'];
   const TOKEN_PATH = 'token.json';
@@ -101,49 +102,25 @@ router.get('/lillachoice', function (req, response) {
 
 
 // Route to post a new article
-
-router.post("/newArticle", (req, res) => {
-  Articles.create(req.body)
-    .then(data => res.json(data))
-    .catch(err => console.log("Error in posting a new Movie!! ", err));
-});
+router.post("/newArticle", new ArticlesController().postArticle);
 
 // Route to get all articles 
 
-router.get("/getAllArticles", (req, res) => {
-  Articles.find()
-    .then(data => {
-      res.json(data);
-    })
-    .catch(err => console.log("Error in retrieving data from DB:", err));
-});
+router.get("/", new ArticlesController().getAllArticles)
+
+
+// Retrieve a single article 
+
+router.get('/:id', new ArticlesController().getArticle) 
+
 
 // Route to delete an article 
 
-router.delete('/:id', function (req, res) {
-  Articles.findByIdAndRemove(req.params.id, function (err, user) {
-    if (err) return res.status(500).send("There was a problem deleting the article.");
-    res.status(200).send("Article: "+ Articles.title +" was deleted.");
-  });
-});
-
+router.delete('/:id', new ArticlesController().deleteArticle );
 
 // Update a single article 
 
-router.put('/update/:id', function (req, res) {
-    // la callback function seria el CONTROLLER
-    // en el controller llamaras al SERVICE
-  mongoose.set('useFindAndModify', false);
-  let { id } = req.params;
-  const body  = {...req.body}
-  console.log("pota questo e' il json", body)
-  Articles.findOneAndUpdate({_id: id}, body, {upsert: true}, function(err, res) {
-    if (err) return `Error during the update`
-    return `Article with ${res.title} updated`
-    // FIX HERE, SHOULD RETURN SOMETHING USEFUL, in both cases the return doesn't return shit
-  });
-
-});
+router.put('/update/:id', new ArticlesController().updateArticle);
 
 // Retrieve a single article 
 
@@ -158,24 +135,7 @@ router.put('/update/:id', function (req, res) {
 //   })
 // });
 
-// Retrieve a single article 
 
-// router.get('/:id', function (req, res) {
-//   let { id } = req.params;
-//   Articles.findOne({_id: id}, function(error, doc) {
-//     if (error) return console.log('Error in retrieving your single Article', doc);
-//     console.log("casa",doc)
-//     res.json(doc);
-//   })
-// });
-
-router.get('/:id', async function (req, res) {
-  let { id } = req.params;
-  const response = await Articles.findOne({_id: id})
-  .populate({path: 'comments', model: "Comments",
-   populate: {path: 'author', model: "User"}})
-  res.json(response)
-});
 // Post Comment
 
 router.post('/comments/:id', async function(req, res, next) {

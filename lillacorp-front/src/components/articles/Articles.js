@@ -12,7 +12,7 @@ function Articles() {
 
  const getAllArticles = () => {
     // request to the backend to retrieve all the articles 
-    axios.get(`http://localhost:3001/articles/getAllArticles`)
+    axios.get(`http://localhost:3001/articles/`)
     .then(res => {
       console.log('youcalledme')
       const articles = res.data;
