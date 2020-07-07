@@ -1,10 +1,10 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
-import logo from './../../images/lillacorp-logo-png.png'
-import './../header.scss';
+import React from "react";
+import PropTypes from "prop-types";
+import { Link } from "react-router-dom";
+import logo from "./../../images/lillacorp-logo-png.png";
+import "./../header.scss";
 
-const Header = props => {
+const Header = (props) => {
   return (
     <nav className="navbar">
       <div className="navbar__container">
@@ -36,8 +36,8 @@ const Header = props => {
               </Link>
             </li>
             <li className="nav-item">
-              <Link to="/lilac" className="navbar__links__link">
-                 Bacheca
+              <Link to="/profile" className="navbar__links__link">
+                Bacheca
               </Link>
             </li>
             <li className="nav-item">
@@ -53,11 +53,11 @@ const Header = props => {
 };
 
 Header.defaultProps = {
-  branding: 'My App'
+  branding: "My App",
 };
 
 Header.propTypes = {
-  branding: PropTypes.string.isRequired
+  branding: PropTypes.string.isRequired,
 };
 
 export default Header;

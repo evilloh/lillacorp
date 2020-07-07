@@ -1,47 +1,51 @@
-import React, { Component, useEffect, useState } from 'react';
-import TextInputGroup from '../layout/TextInputGroup';
-import axios from 'axios';
+import React, { Component, useEffect, useState } from "react";
+import axios from "axios";
+import AuthService from "../../services/auth.service";
+import { Editor } from "@tinymce/tinymce-react";
+const TINY_API = process.env.REACT_APP_TINY_API;
+const DEV_API = process.env.REACT_APP_DEV_API;
 
-function EditArticle (props) {
-  const [title, setTitle] = useState()
-  const [body, setBody] = useState()
-  const [errors, setErrors] = useState({})
-  const [articles, setArticles] = useState({})
+function EditArticle(props) {
+  const [title, setTitle] = useState();
+  const [body, setBody] = useState();
+  const [errors, setErrors] = useState({});
+  const [articles, setArticles] = useState({});
   const state = {
-    title: '',
-    body: '',
-    errors: {}
+    title: "",
+    body: "",
+    errors: {},
   };
 
   useEffect(() => {
-    getArticle()
-  }, [])
+    getArticle();
+  }, []);
 
   const getArticle = () => {
-    const { id } =props.match.params
-    // request to the backend to retrieve all the articles 
-    axios.get(`http://localhost:3001/articles/${id}`)
-    .then(res => {
-      const articles = res.data;
-      setTitle(articles.title);
-      setBody(articles.body);
-    })
-    .catch(res => {
-      console.log('We couldnt retrieve your Article')
-    })
-  }
+    const { id } = props.match.params;
+    // request to the backend to retrieve all the articles
+    axios
+      .get(DEV_API + `/articles/${id}`)
+      .then((res) => {
+        const articles = res.data;
+        setTitle(articles.title);
+        setBody(articles.body);
+      })
+      .catch((res) => {
+        console.log("We couldnt retrieve your Article");
+      });
+  };
 
   const onSubmit = (e) => {
     e.preventDefault();
     // Check For Errorors
-    if (title == '') {
-    setErrors({ title: 'Title is required' });
-    console.log(errors)
-    return;
-  }
+    if (title == "") {
+      setErrors({ title: "Title is required" });
+      console.log(errors);
+      return;
+    }
 
-    if (body == '') {
-      setErrors({ body: 'Body is required' });
+    if (body == "") {
+      setErrors({ body: "Body is required" });
       return;
     }
 
@@ -56,63 +60,98 @@ function EditArticle (props) {
 
     //// UPDATE Article ////
 
-    axios.put(`http://localhost:3001/articles/update/${id}`, updArticle)
-    .then(res => {
-      console.log('vediamo se e passato qualkcosa', res.data)
-    })
-    .catch(res => {
-      console.log('We couldnt UPDATE your Article')
-    })
+    console.log("updated", updArticle);
+    axios
+      .put(DEV_API + `/articles/update/${id}`, updArticle, AuthService.config)
+      .then((res) => {
+        console.log("vediamo se e passato qualkcosa", res.data);
+      })
+      .catch((res) => {
+        console.log("We couldnt UPDATE your Article");
+      });
 
     // Clear State
-    setTitle('')
-    setBody('')
-    setErrors({})
-    
-    // FIX qua faccio una chiamata con tanto code per niente, in teoria dovrei passargli un 
-    // metodo tipo "update all" che viene da redux
-    axios.get(`http://localhost:3001/articles/getAllArticles`)
-    .then(res => {
-      console.log('youcalledme')
+    setTitle("");
+    setBody("");
+    setErrors({});
+
+    axios.get(DEV_API + `/articles/`).then((res) => {
+      console.log("youcalledme");
       const articles = res.data;
       setArticles({ articles });
-      props.history.push('/');
-    })
-
+      props.history.push("/");
+    });
   };
 
-    console.log(props)
-    return (
-      <div className="card mb-3">
-        <div className="card-header">Edit Article</div>
-        <div className="card-body">
-          <form onSubmit={onSubmit}>
-            <TextInputGroup
-              label="Title"
-              name="title"
-              placeholder="Enter Title"
-              value={title}
-              onChange={e => setTitle(e.target.value)}
-              error={errors.title}
-            />
-            <TextInputGroup
-              label="Body"
-              name="body"
-              placeholder="Enter Body"
-              value={body}
-              onChange={e => setBody(e.target.value)}
-              error={errors.body}
-            />
-            <input
-              type="submit"
-              value="Update Contact"
-              className="btn btn-light btn-block"
-            />
-          </form>
-        </div>
-      </div>
-    );
-  }
+  const handleEditorChange = (content, editor) => {
+    setBody(content);
+  };
+  const handleTitleChange = (content, editor) => {
+    setTitle(content);
+  };
 
+  console.log(title, body);
+
+  return (
+    <div className="card mb-3">
+      <div className="card-header">
+        <h1>Add Article</h1>
+      </div>
+      <div className="card-body">
+        <form onSubmit={onSubmit}>
+          <div className="form__article-title">
+            <Editor
+              className="form__article-title"
+              style={{ margin: "20px" }}
+              apiKey={TINY_API}
+              inline={true}
+              value={title}
+              init={{
+                height: 220,
+                menubar: false,
+                plugins: [
+                  // "advlist autolink lists link image charmap print preview anchor",
+                  // "searchreplace visualblocks code fullscreen",
+                  // "insertdatetime media table paste code help wordcount",
+                ],
+                toolbar:
+                  "undo redo | fontsizeselect  fontselect| bold italic  | \
+              \
+              |removeformat |",
+              }}
+              onEditorChange={handleTitleChange}
+              outputFormat="html"
+            />
+          </div>
+
+          <Editor
+            apiKey={TINY_API}
+            value={body}
+            init={{
+              height: 500,
+              menubar: false,
+              plugins: [
+                "advlist autolink lists link image charmap print preview anchor",
+                "searchreplace visualblocks code fullscreen",
+                "insertdatetime media table paste code help wordcount",
+              ],
+              toolbar:
+                "undo redo |fontsizeselect formatselect  fontselect| bold italic backcolor forecolor | \
+                alignleft aligncenter alignright alignjustify | \
+                bullist numlist outdent indent | removeformat |  link image |",
+            }}
+            onEditorChange={handleEditorChange}
+            outputFormat="html"
+          />
+          <input
+            type="submit"
+            value="Submit Article"
+            className="article__comments__new-comment__button"
+          />
+        </form>
+      </div>
+    </div>
+  );
+}
 
 export default EditArticle;
