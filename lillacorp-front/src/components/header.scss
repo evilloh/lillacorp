@@ -1,34 +1,57 @@
+@import "../variables";
+
 // NAVBAR - HEADER
+
+#userCircle {
+  background-color: red;
+  display: block;
+  width: 10rem;
+  height: 10rem;
+  border: 5px solid blue;
+  border-radius: 50%;
+  margin-left: auto;
+  margin-right: 2.5rem;
+  margin-top: 2.5rem;
+}
 
 .navbar {
   height: 32rem;
   width: 100%;
   font-size: 2rem;
-  
-  
-  &__container{
+  color: $base-white;
+
+  &__container {
     height: 100%;
     width: 100%;
-    background-color: #C8A2C8;
+    background-color: $base-lilla;
   }
 
-  &__logo{
+  &__superior {
+    display: flex;
+
+    div {
+      flex-grow: 1;
+      flex-basis: 0;
+    }
+  }
+
+  &__logo {
     text-align: center;
     width: 100%;
     display: block;
-    img{
+    img {
       margin-top: 4.5rem;
       margin-bottom: 5rem;
     }
   }
 
-  &__links{
+  &__links {
     &__container {
       display: flex;
       justify-content: space-between;
     }
-    
-    &__ul{
+
+    &__ul {
       font-weight: 600;
       width: 33%;
       display: flex;
@@ -36,9 +59,10 @@
       margin-bottom: 5rem;
     }
 
-    &__link{
-
+    &__link {
+      &:hover {
+        color: $base-black;
+      }
     }
   }
-
 }

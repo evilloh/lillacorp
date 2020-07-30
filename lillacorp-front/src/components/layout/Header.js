@@ -8,9 +8,17 @@ const Header = (props) => {
   return (
     <nav className="navbar">
       <div className="navbar__container">
-        <Link to="/" className="navbar__logo">
-          <img src={logo}></img>
-        </Link>
+        <div className="navbar__superior">
+          <div></div>
+          <div>
+            <Link to="/" className="navbar__logo">
+              <img src={logo}></img>
+            </Link>
+          </div>
+          <div className="navbar__superior__user-container">
+            <Link to="/profile" id="userCircle"></Link>
+          </div>
+        </div>
         <div className="navbar__links__container">
           <ul className="navbar__links__ul">
             <li className="nav-item">

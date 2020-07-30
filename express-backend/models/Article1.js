@@ -9,7 +9,7 @@ const articleSchema = new Schema(
     comments: [{ type: mongoose.Schema.Types.ObjectId, ref: "Comments" }],
     tagList: [{ type: String }],
     author: { type: String },
-    imageUrl: String,
+    imgUrl: String,
     createdAt: { type: Date, default: Date.now, required: true },
   },
   {
